@@ -1,2 +1,13 @@
-date,event_name,event_type,description,region,impact_level
-2022-02-24,Russia-Ukraine War,Conflict,Military invasion of Ukraine,Europe,High
+date,event_name,event_type,region,impact_level,description
+1990-08-02,Iraq Invades Kuwait,Conflict,Middle East,High,Iraq invades Kuwait triggering Gulf War
+1991-01-17,Operation Desert Storm,Conflict,Middle East,High,Coalition military action affecting oil production
+2003-03-20,Iraq War Begins,Conflict,Middle East,High,US-led invasion impacting oil supply
+2005-08-29,Hurricane Katrina,Disaster,USA,Medium,Hurricane disrupts Gulf of Mexico oil production
+2008-09-15,Lehman Brothers Collapse,Economic Crisis,Global,High,Global financial crisis affecting oil demand
+2011-02-11,Arab Spring Begins,Conflict,Middle East,Medium,Political instability in key oil-producing countries
+2014-03-16,Crimea Annexation,Conflict,Europe/Ukraine,High,Russia annexes Crimea affecting geopolitical risk
+2016-11-30,OPEC Production Cut,Policy,Global,High,OPEC announces coordinated production cut
+2019-09-14,Saudi Oil Facility Attacks,Conflict,Middle East,High,Drone attacks reduce Saudi oil production significantly
+2020-03-09,Oil Price War Begins,Conflict,Global,High,Saudi-Russia price war triggers market crash
+2020-03-11,COVID-19 Pandemic Declared,Health/Policy,Global,High,Global pandemic reduces demand sharply
+2022-02-24,Russia-Ukraine War,Conflict,Europe,High,Russian invasion of Ukraine affects supply and prices
