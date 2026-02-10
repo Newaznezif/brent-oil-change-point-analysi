@@ -1,8 +1,8 @@
 ﻿import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, ReferenceLine } from 'recharts';
 import { Paper, Typography } from '@mui/material';
 
-const ReturnsChart = ({ data }) => {
+const ReturnsChart = ({ data, changePoints, highlightedDate }) => {
   // 1. Data Safety Check & Transformation
   const chartData = React.useMemo(() => {
     if (!data) return [];
@@ -12,7 +12,7 @@ const ReturnsChart = ({ data }) => {
       return data.dates.map((date, index) => ({
         date: date || 'N/A',
         return: data.returns[index] || 0
-      })).slice(1);
+      }));
     }
 
     // Case 2: Array of objects [{ Date/date, Return/return/Price }, ...]
@@ -33,7 +33,7 @@ const ReturnsChart = ({ data }) => {
           date: item?.Date || item?.date || 'N/A',
           return: returnVal
         };
-      }).slice(1);
+      });
     }
 
     return [];
@@ -53,9 +53,30 @@ const ReturnsChart = ({ data }) => {
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" hide={chartData.length > 100} />
+          <XAxis dataKey="date" hide={chartData.length > 200} tick={{ fontSize: 10 }} angle={-45} textAnchor="end" height={60} />
           <YAxis tickFormatter={(val) => `${val?.toFixed(1) || '0'}%`} />
           <Tooltip formatter={(val) => [`${val?.toFixed(3) || '0.000'}%`, 'Return']} />
+          <Legend />
+
+          {/* Change Points as Reference Lines */}
+          {changePoints && changePoints.map((cp, idx) => (
+            <ReferenceLine
+              key={`cp-ret-${idx}`}
+              x={cp.change_date}
+              stroke="#ff9800"
+              strokeDasharray="3 3"
+            />
+          ))}
+
+          {/* Highlighted Date Line */}
+          {highlightedDate && (
+            <ReferenceLine
+              x={highlightedDate}
+              stroke="#f44336"
+              strokeWidth={2}
+            />
+          )}
+
           <Bar dataKey="return" name="Daily Return">
             {chartData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.return >= 0 ? '#4caf50' : '#f44336'} />

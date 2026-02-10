@@ -1,8 +1,7 @@
-﻿import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Paper, Typography } from '@mui/material';
+﻿import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { Paper, Typography, Box } from '@mui/material';
 
-const PriceChart = ({ data, changePoints }) => {
+const PriceChart = ({ data, changePoints, highlightedDate }) => {
   if (!data || !data.dates || data.dates.length === 0) {
     return (
       <Paper sx={{ p: 3, textAlign: 'center' }}>
@@ -24,18 +23,26 @@ const PriceChart = ({ data, changePoints }) => {
 
   return (
     <Paper sx={{ p: 3 }}>
-      <Typography variant="h6" gutterBottom>
-        Brent Oil Price History
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+        <Typography variant="h6" gutterBottom>
+          Brent Oil Price History
+        </Typography>
+        {highlightedDate && (
+          <Typography variant="body2" color="primary" sx={{ fontWeight: 'bold' }}>
+            Highlighted: {highlightedDate}
+          </Typography>
+        )}
+      </Box>
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="date"
-            tick={{ fontSize: 12 }}
+            tick={{ fontSize: 10 }}
             angle={-45}
             textAnchor="end"
-            height={60}
+            height={70}
+            interval="preserveStartEnd"
           />
           <YAxis
             domain={[minPrice, maxPrice]}
@@ -46,6 +53,28 @@ const PriceChart = ({ data, changePoints }) => {
             labelFormatter={(label) => `Date: ${label}`}
           />
           <Legend />
+
+          {/* Change Points as Reference Lines */}
+          {changePoints && changePoints.map((cp, idx) => (
+            <ReferenceLine
+              key={`cp-${idx}`}
+              x={cp.change_date}
+              stroke="#ff9800"
+              label={{ position: 'top', value: 'CP', fill: '#ff9800', fontSize: 10 }}
+              strokeDasharray="3 3"
+            />
+          ))}
+
+          {/* Highlighted Date Line */}
+          {highlightedDate && (
+            <ReferenceLine
+              x={highlightedDate}
+              stroke="#f44336"
+              strokeWidth={3}
+              label={{ position: 'top', value: 'SELECTED', fill: '#f44336', fontSize: 12, fontWeight: 'bold' }}
+            />
+          )}
+
           <Line
             type="monotone"
             dataKey="price"

@@ -1,4 +1,4 @@
-﻿"""
+"""
 Data models and processing helpers for Brent Oil Analysis Dashboard
 """
 import os
@@ -11,6 +11,10 @@ warnings.filterwarnings('ignore')
 
 class DataManager:
     """Manages all data operations for the dashboard"""
+    processed_data: pd.DataFrame
+    change_points: pd.DataFrame
+    events: pd.DataFrame
+    analysis_results: dict
     
     def __init__(self, data_dir='../../data'):
         self.data_dir = os.path.abspath(data_dir)
@@ -29,6 +33,21 @@ class DataManager:
             if os.path.exists(processed_path):
                 self.processed_data = pd.read_csv(processed_path, parse_dates=['Date'])
                 self.processed_data.set_index('Date', inplace=True)
+                
+                # Normalize column names for case-insensitivity
+                col_map = {col.lower(): col for col in self.processed_data.columns}
+                
+                if 'price' in col_map and 'Price' not in self.processed_data.columns:
+                    self.processed_data.rename(columns={col_map['price']: 'Price'}, inplace=True)
+                
+                if 'log_returns' in col_map and 'Log_Returns' not in self.processed_data.columns:
+                    self.processed_data.rename(columns={col_map['log_returns']: 'Log_Returns'}, inplace=True)
+                
+                # Calculate Log_Returns if still missing but Price exists
+                if 'Price' in self.processed_data.columns and 'Log_Returns' not in self.processed_data.columns:
+                    print("Calculating Log_Returns from Price...")
+                    self.processed_data['Log_Returns'] = np.log(self.processed_data['Price']).diff().fillna(0) * 100
+                    
                 print(f"✓ Loaded processed data: {len(self.processed_data)} rows")
             else:
                 print(f"✗ Processed data not found: {processed_path}")

@@ -11,6 +11,9 @@ api_bp = Blueprint('api', __name__)
 
 def get_dm():
     """Helper to get data manager from current_app"""
+    if 'DATA_MANAGER' not in current_app.config:
+        from .models import DataManager
+        current_app.config['DATA_MANAGER'] = DataManager()
     return current_app.config['DATA_MANAGER']
 
 @api_bp.route('/prices')
