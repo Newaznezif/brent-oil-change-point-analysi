@@ -1,0 +1,9 @@
+﻿change_point_id,change_point_date,change_point_index,detection_method,confidence_level,mean_before,mean_after,mean_change_pct,vol_before,vol_after,vol_change_pct,impact_magnitude,associated_event,event_days_diff,statistical_significance,regime_duration_days,notes
+1,2008-10-10,5382,bayesian_single,high,0.0423,-0.0187,-144.2,2.123,4.567,115.1,high,Lehman Brothers Collapse,25,significant,4385,Major financial crisis impact
+2,2014-11-20,6889,bayesian_single,high,0.0156,-0.0324,-307.7,1.845,3.987,116.1,high,OPEC Maintains Production,-7,significant,1520,OPEC policy shift
+3,2020-03-23,8205,bayesian_single,high,0.0087,-0.145,-1767.8,2.345,8.765,273.8,very_high,COVID-19 Pandemic,12,significant,560,Pandemic shock
+4,2022-03-01,8650,bayesian_single,medium,-0.0123,0.0456,470.7,3.456,4.321,25.0,medium,Russia-Ukraine War,5,significant,450,Geopolitical conflict
+5,1990-10-15,850,rolling_window,medium,0.0234,0.0567,142.3,1.234,1.567,27.0,medium,Iraq Invades Kuwait,74,significant,1520,Gulf War impact
+6,2003-05-01,3980,rolling_window,low,0.0345,0.0123,-64.3,1.987,2.345,18.0,low,Iraq War Begins,42,marginal,1250,Iraq War aftermath
+7,2011-03-15,5980,rolling_window,medium,0.0456,0.0234,-48.7,2.123,2.876,35.5,medium,Arab Spring Begins,32,significant,980,Arab Spring instability
+8,2016-02-01,7150,rolling_window,low,-0.0234,-0.0123,47.4,2.456,2.123,-13.6,low,OPEC Production Cut,63,marginal,800,OPEC coordination

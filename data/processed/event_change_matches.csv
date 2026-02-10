@@ -1,0 +1,6 @@
+change_point_date,change_point_id,event_name,event_date,event_type,impact_level,days_difference,cp_mean_change_pct,cp_impact_magnitude,event_price_change_pct
+2008-10-10,1,Lehman Brothers Collapse,2008-09-15,Economic Crisis,High,25,-144.2,high,-16.337838013107024
+2020-03-23,3,COVID-19 Pandemic Declared,2020-03-11,Health/Policy,High,12,-1767.8,very_high,-53.12420049018939
+2022-03-01,4,Russia-Ukraine War,2022-02-24,Conflict,High,5,470.7,medium,21.36045106625708
+2003-05-01,6,Iraq War Begins,2003-03-20,Conflict,High,42,-64.3,low,-20.624049530951417
+2011-03-15,7,Arab Spring Begins,2011-02-11,Conflict,Medium,32,-48.7,medium,11.69718780999839
