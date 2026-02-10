@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { format } from 'date-fns';
 
-const EventsTable = ({ data, changePoints, onRefresh }) => {
+const EventsTable = ({ data, changePoints, onRefresh, onSelectDate }) => {
   if (!data || data.length === 0) {
     return (
       <Paper sx={{ p: 3, textAlign: 'center' }}>
@@ -38,7 +38,7 @@ const EventsTable = ({ data, changePoints, onRefresh }) => {
           Geopolitical Events
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {data.length} events recorded
+          {data.length} events recorded (Click row to highlight)
         </Typography>
       </Box>
 
@@ -55,7 +55,12 @@ const EventsTable = ({ data, changePoints, onRefresh }) => {
           </TableHead>
           <TableBody>
             {(data || []).map((event, index) => (
-              <TableRow key={event?.event_id || index}>
+              <TableRow
+                key={event?.event_id || index}
+                hover
+                onClick={() => onSelectDate && onSelectDate(event.date)}
+                sx={{ cursor: 'pointer' }}
+              >
                 <TableCell>
                   <Typography fontWeight="medium">
                     {event?.event_name || 'Unnamed Event'}

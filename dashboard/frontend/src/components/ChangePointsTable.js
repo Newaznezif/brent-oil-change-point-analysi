@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { format } from 'date-fns';
 
-const ChangePointsTable = ({ data, events, onRefresh }) => {
+const ChangePointsTable = ({ data, events, onRefresh, onSelectDate }) => {
   if (!data || data.length === 0) {
     return (
       <Paper sx={{ p: 3, textAlign: 'center' }}>
@@ -42,7 +42,7 @@ const ChangePointsTable = ({ data, events, onRefresh }) => {
           Detected Change Points
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {data.length} change points detected
+          {data.length} change points detected (Click row to highlight)
         </Typography>
       </Box>
 
@@ -62,7 +62,12 @@ const ChangePointsTable = ({ data, events, onRefresh }) => {
           </TableHead>
           <TableBody>
             {(data || []).map((cp) => (
-              <TableRow key={cp?.change_point_id || cp?.id || Math.random()}>
+              <TableRow
+                key={cp?.change_point_id || cp?.id || Math.random()}
+                hover
+                onClick={() => onSelectDate && onSelectDate(cp.change_date)}
+                sx={{ cursor: 'pointer' }}
+              >
                 <TableCell>{cp?.change_point_id || cp?.id || 'N/A'}</TableCell>
                 <TableCell>
                   {cp?.change_date ? format(new Date(cp.change_date), 'MMM dd, yyyy') : 'N/A'}

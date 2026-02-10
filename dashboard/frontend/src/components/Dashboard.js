@@ -30,6 +30,13 @@ const Dashboard = ({ initialData }) => {
   const [changePoints, setChangePoints] = useState([]);
   const [events, setEvents] = useState([]);
 
+  // Date filter state
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  // Highlighting state for interactions
+  const [highlightedDate, setHighlightedDate] = useState(null);
+
   useEffect(() => {
     if (initialData) {
       setDashboardStats(initialData);
@@ -37,14 +44,18 @@ const Dashboard = ({ initialData }) => {
     }
   }, [initialData]);
 
-  const loadAllData = async () => {
+  const loadAllData = async (start = startDate, end = endDate) => {
     setLoading(true);
     setError(null);
 
     try {
-      // 1. Syncing with backend/api.py endpoints
+      const params = {};
+      if (start) params.start_date = start;
+      if (end) params.end_date = end;
+
+      // 1. Syncing with backend/api.py endpoints with potential filters
       const [pricesRes, cpRes, eventsRes, returnsRes] = await Promise.all([
-        axios.get('http://127.0.0.1:5000/api/prices'),
+        axios.get('http://127.0.0.1:5000/api/prices', { params }),
         axios.get('http://127.0.0.1:5000/api/change-points'),
         axios.get('http://127.0.0.1:5000/api/events'),
         axios.get('http://127.0.0.1:5000/api/returns')
@@ -56,8 +67,7 @@ const Dashboard = ({ initialData }) => {
       setEvents(eventsRes.data);
       setReturnsData(returnsRes.data);
 
-      // 3. Update dashboard stats from backend summary if available, 
-      // or calculate from components
+      // 3. Update dashboard stats
       const summaryRes = await axios.get('http://127.0.0.1:5000/api/dashboard/summary');
       setDashboardStats(summaryRes.data);
 
@@ -76,6 +86,15 @@ const Dashboard = ({ initialData }) => {
 
   const handleRefresh = () => {
     loadAllData();
+  };
+
+  const handleFilterApply = () => {
+    loadAllData(startDate, endDate);
+  };
+
+  const handleDateHighlight = (date) => {
+    setHighlightedDate(date);
+    setActiveTab(0); // Switch to Price Analysis when an item is clicked
   };
 
   if (loading && !dashboardStats.key_metrics) {
@@ -103,7 +122,7 @@ const Dashboard = ({ initialData }) => {
   return (
     <Box>
       {/* Dashboard Header */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box sx={{ mb: 4, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', md: 'center' }, gap: 2 }}>
         <Box>
           <Typography variant="h4" gutterBottom>
             Brent Oil Analysis Dashboard
@@ -112,13 +131,32 @@ const Dashboard = ({ initialData }) => {
             Bayesian Change Point Detection & Market Regime Analysis
           </Typography>
         </Box>
-        <Button
-          variant="outlined"
-          onClick={handleRefresh}
-          disabled={loading}
-        >
-          {loading ? 'Refreshing...' : 'Refresh Data'}
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+          <Box component="span" sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+            <Typography variant="body2">From:</Typography>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              style={{ padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }}
+            />
+            <Typography variant="body2">To:</Typography>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              style={{ padding: '5px', borderRadius: '4px', border: '1px solid #ccc' }}
+            />
+            <Button variant="contained" size="small" onClick={handleFilterApply}>Apply</Button>
+          </Box>
+          <Button
+            variant="outlined"
+            onClick={handleRefresh}
+            disabled={loading}
+          >
+            {loading ? 'Refreshing...' : 'Refresh'}
+          </Button>
+        </Box>
       </Box>
 
       {/* Stats Summary */}
@@ -179,7 +217,7 @@ const Dashboard = ({ initialData }) => {
 
       {/* Navigation Tabs */}
       <Paper sx={{ mb: 4 }}>
-        <Tabs value={activeTab} onChange={handleTabChange} centered>
+        <Tabs value={activeTab} onChange={handleTabChange} centered variant="scrollable" scrollButtons="auto">
           <Tab label="Price Analysis" />
           <Tab label="Change Points" />
           <Tab label="Events" />
@@ -193,10 +231,18 @@ const Dashboard = ({ initialData }) => {
         {activeTab === 0 && (
           <Grid container spacing={3}>
             <Grid item xs={12}>
-              <PriceChart data={priceData} changePoints={changePoints} />
+              <PriceChart
+                data={priceData}
+                changePoints={changePoints}
+                highlightedDate={highlightedDate}
+              />
             </Grid>
             <Grid item xs={12}>
-              <ReturnsChart data={returnsData} changePoints={changePoints} />
+              <ReturnsChart
+                data={returnsData}
+                changePoints={changePoints}
+                highlightedDate={highlightedDate}
+              />
             </Grid>
           </Grid>
         )}
@@ -206,6 +252,7 @@ const Dashboard = ({ initialData }) => {
             data={changePoints}
             events={events}
             onRefresh={handleRefresh}
+            onSelectDate={handleDateHighlight}
           />
         )}
 
@@ -214,6 +261,7 @@ const Dashboard = ({ initialData }) => {
             data={events}
             changePoints={changePoints}
             onRefresh={handleRefresh}
+            onSelectDate={handleDateHighlight}
           />
         )}
 
